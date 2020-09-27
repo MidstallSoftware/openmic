@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(openmic VERSION "0.1.0" DESCRIPTION "A free and open source real-time voice changing software" HOMEPAGE_URL "http://midstall.com/openmic")
+project(openmic VERSION "0.1.0" DESCRIPTION "A free and open source real-time voice changing software" HOMEPAGE_URL "http://midstall.com/openmic" LANGUAGES C)
 
 option(OPENMIC_GUI "Enables GUI support in the library and builds a graphical frontend" ON)
 
