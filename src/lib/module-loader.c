@@ -62,6 +62,7 @@ static gboolean openmic_module_loader_load(GTypeModule* gmodule) {
 	OpenMicModuleLoader* self = OPENMIC_MODULE_LOADER(gmodule);
 	OpenMicModuleLoaderPrivate* priv = openmic_module_loader_get_instance_private(self);
 	GType (*register_type)(GTypeModule*) = NULL;
+	void (*register_extra_types)(GTypeModule*) = NULL;
 	if (priv->lib && priv->type) return TRUE;
 	g_assert(priv->path);
 	if (!priv->lib && !(priv->lib = g_module_open(priv->path, 0))) {
@@ -73,6 +74,9 @@ static gboolean openmic_module_loader_load(GTypeModule* gmodule) {
 		if (!type) {
 			g_error("Failed to register type \"%s\"", priv->path);
 			return FALSE;
+		}
+		if (g_module_symbol(priv->lib, "register_extra_types", (gpointer*)(void*)&register_extra_types) && register_extra_types) {
+			register_extra_types(gmodule);
 		}
 		priv->type = type;
 		return TRUE;

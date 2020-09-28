@@ -11,5 +11,7 @@ CTestTestfile.cmake
 _deps
 *.a
 *.so
-openmic
+openmic-cli
+openmic-gui
+openmic-tui
 **/include/openmic-config.h
