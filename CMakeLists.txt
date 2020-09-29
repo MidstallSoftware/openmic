@@ -7,8 +7,10 @@ option(OPENMIC_GUI "Enables GUI support in the library and builds a graphical fr
 option(OPENMIC_TUI "Enables TUI support in the library and builds a terminal UI frontend" ON)
 option(OPENMIC_CLI "Builds a CLI utility for working with OpenMic" ON)
 
-if(UNIX OR ANDROID OR IOS OR APPLE)
+if(UNIX OR ANDROID)
 	set(OPENMIC_MODULE_EXT "so")
+elseif(IOS OR APPLE)
+	set(OPENMIC_MODULE_EXT "dylib")
 elseif(WIN32 OR MINGW)
 	set(OPENMIC_MODULE_EXT "dll")
 else()
@@ -21,6 +23,10 @@ find_package(PkgConfig REQUIRED)
 find_package(Git REQUIRED)
 
 pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0)
+
+if(APPLE OR ISO)
+	pkg_check_modules(GMODULE REQUIRED IMPORTED_TARGET gmodule-2.0)
+endif()
 
 if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/.git")
 	execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse -q HEAD
@@ -59,6 +65,11 @@ target_link_libraries(libopenmic-shared PUBLIC PkgConfig::GST)
 add_library(libopenmic-static STATIC "${LIB_SOURCES}")
 set_target_properties(libopenmic-static PROPERTIES OUTPUT_NAME "openmic" COMPILE_DEFINITIONS "GETTEXT_PACKAGE=libopenmic")
 target_link_libraries(libopenmic-static PUBLIC PkgConfig::GST)
+
+if(APPLE OR ISO)
+	target_link_libraries(libopenmic-shared PUBLIC PkgConfig::GMODULE)
+	target_link_libraries(libopenmic-static PUBLIC PkgConfig::GMODULE)
+endif()
 
 if(OPENMIC_GUI)
 	target_link_libraries(libopenmic-shared PUBLIC PkgConfig::GTK)
