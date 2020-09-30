@@ -1,4 +1,4 @@
-#pragma onc
+#pragma once
 
 #include <gst/gst.h>
 #include <glib-object.h>
@@ -12,6 +12,7 @@ struct _OpenMicNodeClass {
 	GObjectClass parent_class;
 
 	GstBin* bin;
+	GNode* gnode;
 };
 
 G_END_DECLS
