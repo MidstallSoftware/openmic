@@ -20,6 +20,8 @@ enable_cli = get_option('enable_cli')
 enable_gui = get_option('enable_gui')
 enable_tui = get_option('enable_tui')
 
+pkgconfig = import('pkgconfig')
+
 config_data = configuration_data()
 config_data.set('version', meson.project_version())
 config_data.set('version_major', meson.project_version().split('.')[0])
@@ -50,25 +52,34 @@ lib_sources = [join_paths(meson.source_root(), 'src/lib/context.c'), join_paths(
 lib_headers = [join_paths(meson.source_root(), 'include/OpenMic/context.h'), join_paths(meson.source_root(), 'include/OpenMic/module-loader.h'),
   join_paths(meson.source_root(), 'include/OpenMic/module-manager.h'), join_paths(meson.source_root(), 'include/OpenMic/module.h'),
   join_paths(meson.source_root(), 'include/OpenMic/node.h'), join_paths(meson.source_root(), 'include/OpenMic/openmic.h')]
-both_libraries('openmic', lib_sources, soversion: 0, version: meson.project_version().split('-')[0],
+libopenmic = both_libraries('openmic', lib_sources, soversion: 0, version: meson.project_version().split('-')[0],
   include_directories: [include_directories('include')], dependencies: basedeps,
   install: true,
   install_dir: path_libdir)
 install_headers(join_paths(meson.build_root(), 'openmic-config.h'), install_dir: path_includedir)
 install_headers(lib_headers, install_dir: join_paths(path_includedir, 'OpenMic'))
 
+libopenmic_dep = declare_dependency(link_with: libopenmic,
+  include_directories: [include_directories('include')],
+  dependencies: basedeps,
+  sources: lib_sources)
+pkgconfig.generate(libopenmic, libraries: basedeps, name: 'OpenMic', filebase: 'openmic', url: 'http://midstall.com/openmic', version: meson.project_version(), description: 'OpenMic is a modular real-time voice effects library')
+
 if enable_cli
   executable('openmic-cli', join_paths(meson.source_root(), 'src/cli/main.c'),
+    dependencies: [libopenmic_dep],
     install: true,
     install_dir: path_bindir)
 endif
 if enable_gui
   executable('openmic-gui', join_paths(meson.source_root(), 'src/gui/main.c'),
+    dependencies: [libopenmic_dep],
     install: true,
     install_dir: path_bindir)
 endif
 if enable_tui
   executable('openmic-tui', join_paths(meson.source_root(), 'src/tui/main.c'),
+    dependencies: [libopenmic_dep],
     install: true,
     install_dir: path_bindir)
 endif

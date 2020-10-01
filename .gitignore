@@ -1,6 +1,10 @@
 *.a
+*.pc
 *.so*
 *.dylib
+*.o
+.ninja_log
+.ninja_deps
 openmic-cli
 openmic-gui
 openmic-tui
