@@ -1,11 +1,11 @@
-project('openmic', 'c', version: '0.1.0-prealpha', license: 'GPLv3')
+project('OpenMic', 'c', version: '0.1.0-prealpha', license: 'GPLv3')
 
 if target_machine.system() == 'android' or target_machine.system() == 'linux'
   module_ext = 'so'
 elif target_machine.system() == 'darwin'
   module_ext = 'dylib'
 elif target_machine.system() == 'windows'
-  mdoule_ext = 'dll'
+  module_ext = 'dll'
 else
   error('Unsuported target machine')
 endif
@@ -21,6 +21,21 @@ enable_gui = get_option('enable_gui')
 enable_tui = get_option('enable_tui')
 
 pkgconfig = import('pkgconfig')
+
+summary({
+    'prefix': path_prefix,
+    'bindir': get_option('bindir'),
+    'datadir': get_option('datadir'),
+    'libdir': get_option('libdir'),
+    'includedir': get_option('includedir')
+  }, section: 'Directories')
+
+summary({
+    'CLI Enabled': enable_cli,
+    'GUI Enabled': enable_gui,
+    'TUI Enabled': enable_tui,
+    'Module extension': module_ext
+  }, section: 'Configuration')
 
 config_data = configuration_data()
 config_data.set('version', meson.project_version())
