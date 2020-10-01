@@ -29,7 +29,7 @@ i18n = import('i18n')
 components = []
 
 if enable_cli
-  components += 'CLI Executable'
+  components += 'CLI Backend & Executable'
 endif
 if enable_gui
   components += 'GUI Backend & Executable'

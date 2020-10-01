@@ -32,6 +32,9 @@ struct _OpenMicModuleClass {
 	const OpenMicModuleInfo* (*module_info)(OpenMicModule* module);
 	OpenMicNode* (*apply)(OpenMicModule* module, OpenMicNode* node);
 
+#ifdef OPENMIC_CLI
+	GOptionGroup* (*create_cli)(OpenMicModule* module);
+#endif
 #ifdef OPENMIC_GUI
 	GtkWidget* (*create_gui)(OpenMicModule* module);
 #endif
