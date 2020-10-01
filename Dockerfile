@@ -9,7 +9,8 @@ RUN useradd -m builder
 ADD --chown=builder data /opt/openmic/data
 ADD --chown=builder include /opt/openmic/include
 ADD --chown=builder src /opt/openmic/src
-ADD --chown=builder meson.build /opt/openmic/CMakeLists.txt
+ADD --chown=builder meson.build /opt/openmic/meson.build
+ADD --chown=builder meson_options.txt /opt/openmic/meson_options.txt
 
 RUN mkdir -p /opt/openmic/build && chown -R builder /opt/openmic
 USER builder
