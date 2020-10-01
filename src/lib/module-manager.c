@@ -80,6 +80,10 @@ static void openmic_module_manager_init(OpenMicModuleManager* self) {
 	priv->loaders = g_ptr_array_new_with_free_func(g_object_unref);
 }
 
+OpenMicModuleManager* openmic_module_manager_new(OpenMicContext* ctx) {
+	return g_object_new(OPENMIC_TYPE_MODULE_MANAGER, "context", ctx, NULL);
+}
+
 void openmic_module_manager_append(OpenMicModuleManager* self, const gchar* path) {
 	OpenMicModuleManagerPrivate* priv = openmic_module_manager_get_instance_private(self);
 	g_ptr_array_add(priv->paths, g_strdup(path));

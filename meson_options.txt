@@ -1,0 +1,3 @@
+option('enable_gui', type: 'boolean', value: true, description: 'Enables GUI support in the library and builds a graphical frontend')
+option('enable_tui', type: 'boolean', value: true, description: 'Enables TUI support in the library and builds a terminal UI frontend')
+option('enable_cli', type: 'boolean', value: true, description: 'Builds a CLI utility for working with OpenMic')
