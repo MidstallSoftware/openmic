@@ -16,5 +16,5 @@ ADD --chown=builder meson_options.txt /opt/openmic/meson_options.txt
 RUN mkdir -p /opt/openmic/build && chown -R builder /opt/openmic
 USER builder
 
-RUN cd /opt/openmic && meson /opt/openmic/build 
+RUN cd /opt/openmic && meson /opt/openmic/build -D enable_cuda=false 
 ENTRYPOINT ["ninja", "-C", "/opt/openmic/build"]
