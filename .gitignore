@@ -3,6 +3,7 @@
 *.so*
 *.dylib
 *.o
+*.gmo
 .ninja_log
 .ninja_deps
 openmic-cli
@@ -11,6 +12,7 @@ openmic-tui
 openmic-config.h
 **/meson-info/*.json
 **/meson-logs/*.txt
+**/meson-dist/
 **/build.ninja
 **/compile_commands.json
 **/meson-private

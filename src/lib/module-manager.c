@@ -18,9 +18,6 @@ G_DEFINE_TYPE_WITH_PRIVATE(OpenMicModuleManager, openmic_module_manager, G_TYPE_
 static GParamSpec* obj_props[N_PROPS] = { NULL };
 
 static void openmic_module_manager_dispose(GObject* obj) {
-	OpenMicModuleManager* self = OPENMIC_MODULE_MANAGER(obj);
-	OpenMicModuleManagerPrivate* priv = openmic_module_manager_get_instance_private(self);
-
 	G_OBJECT_CLASS(openmic_module_manager_parent_class)->dispose(obj);
 }
 

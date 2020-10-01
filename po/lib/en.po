@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2020-10-01 14:31-0700\n"
+"PO-Revision-Date: 2020-10-01 14:31-0700\n"
+"Last-Translator: Tristan Ross <rosscomputerguy@protonmail.com>\n"
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "LIB_OPTS"
+msgstr "OpenMic Library Options"
+
+msgid "INIT_FAILURE"
+msgstr "OpenMic library has failed to initialize: %s"
+
+msgid "ERROR_UNKNOWN"
+msgstr "Unknown error"
+
+msgid "ARGS_LABEL"
+msgstr "- OpenMic Library"

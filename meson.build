@@ -20,7 +20,29 @@ enable_cli = get_option('enable_cli')
 enable_gui = get_option('enable_gui')
 enable_tui = get_option('enable_tui')
 
+enable_cuda = get_option('enable_cuda')
+enable_opencl = get_option('enable_opencl')
+
 pkgconfig = import('pkgconfig')
+i18n = import('i18n')
+
+components = []
+
+if enable_cli
+  components += 'CLI Executable'
+endif
+if enable_gui
+  components += 'GUI Backend & Executable'
+endif
+if enable_tui
+  components += 'TUI Backend & Executable'
+endif
+if enable_cuda
+  components += 'CUDA Hardware Accleration'
+endif
+if enable_opencl
+  components += 'OpenCL Hardware Accleration'
+endif
 
 summary({
     'prefix': path_prefix,
@@ -31,9 +53,7 @@ summary({
   }, section: 'Directories')
 
 summary({
-    'CLI Enabled': enable_cli,
-    'GUI Enabled': enable_gui,
-    'TUI Enabled': enable_tui,
+    'Components': components,
     'Module extension': module_ext
   }, section: 'Configuration')
 
@@ -50,6 +70,8 @@ config_data.set('libdir', path_libdir)
 config_data.set('OPENMIC_CLI', enable_cli)
 config_data.set('OPENMIC_GUI', enable_gui)
 config_data.set('OPENMIC_TUI', enable_tui)
+config_data.set('OPENMIC_CUDA', enable_cuda)
+config_data.set('OPENMIC_OPENCL', enable_opencl)
 configure_file(input: join_paths(meson.source_root(), 'data/config.h.in'), output: 'openmic-config.h', configuration: config_data)
 
 basedeps = [dependency('gstreamer-1.0'), dependency('glib-2.0'), dependency('gmodule-2.0')]
@@ -61,14 +83,24 @@ if enable_gui
   basedeps += [dependency('gtk+-3.0')]
 endif
 
+subdir('po')
+
 lib_sources = [join_paths(meson.source_root(), 'src/lib/context.c'), join_paths(meson.source_root(), 'src/lib/module-loader.c'),
   join_paths(meson.source_root(), 'src/lib/module-manager.c'), join_paths(meson.source_root(), 'src/lib/module.c'),
   join_paths(meson.source_root(), 'src/lib/node.c'), join_paths(meson.source_root(), 'src/lib/openmic.c')]
 lib_headers = [join_paths(meson.source_root(), 'include/OpenMic/context.h'), join_paths(meson.source_root(), 'include/OpenMic/module-loader.h'),
   join_paths(meson.source_root(), 'include/OpenMic/module-manager.h'), join_paths(meson.source_root(), 'include/OpenMic/module.h'),
   join_paths(meson.source_root(), 'include/OpenMic/node.h'), join_paths(meson.source_root(), 'include/OpenMic/openmic.h')]
+
+if enable_cuda
+  if not add_languages('cuda', required: true)
+    error('Failed to enable CUDA')
+  endif
+endif
+
 libopenmic = both_libraries('openmic', lib_sources, soversion: 0, version: meson.project_version().split('-')[0],
   include_directories: [include_directories('include')], dependencies: basedeps,
+  c_args: '-DGETTEXT_PACKAGE="libopenmic"',
   install: true,
   install_dir: path_libdir)
 install_headers(join_paths(meson.build_root(), 'openmic-config.h'), install_dir: path_includedir)
@@ -83,18 +115,22 @@ pkgconfig.generate(libopenmic, libraries: basedeps, name: 'OpenMic', filebase: '
 if enable_cli
   executable('openmic-cli', join_paths(meson.source_root(), 'src/cli/main.c'),
     dependencies: [libopenmic_dep],
+    c_args: '-DGETTEXT_PACKAGE="openmic-cli"',
     install: true,
     install_dir: path_bindir)
 endif
 if enable_gui
   executable('openmic-gui', join_paths(meson.source_root(), 'src/gui/main.c'),
     dependencies: [libopenmic_dep],
+    c_args: '-DGETTEXT_PACKAGE="openmic-gui"',
+    gui_app: true,
     install: true,
     install_dir: path_bindir)
 endif
 if enable_tui
   executable('openmic-tui', join_paths(meson.source_root(), 'src/tui/main.c'),
     dependencies: [libopenmic_dep],
+    c_args: '-DGETTEXT_PACKAGE="openmic-tui"',
     install: true,
     install_dir: path_bindir)
 endif
