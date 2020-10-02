@@ -1,1 +1,1 @@
-i18n.gettext('libopenmic', preset: 'glib', languages: ['en'])
+i18n.gettext('openmic-cli', preset: 'glib', languages: ['en'])

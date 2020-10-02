@@ -23,7 +23,6 @@ struct _OpenMicContext {
 
 typedef struct _OpenMicContextOptions {
 	gchar** module_paths;
-	gint n_module_paths;
 } OpenMicContextOptions;
 
 OpenMicContext* openmic_context_new(OpenMicContextOptions opts);

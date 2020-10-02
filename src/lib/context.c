@@ -12,6 +12,7 @@ enum {
 typedef struct _OpenMicContextPrivate {
 	GPtrArray* modules;
 	GMainLoop* main_loop;
+	OpenMicContextOptions opts;
 } OpenMicContextPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE(OpenMicContext, openmic_context, G_TYPE_OBJECT);
@@ -34,8 +35,8 @@ static void openmic_context_class_init(OpenMicContextClass* klass) {
 	object_class->dispose = openmic_context_dispose;
 	object_class->finalize = openmic_context_finalize;
 
-	obj_sigs[SIG_TREE_BUILD_PRE] = g_signal_newv("tree-build:pre", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
-	obj_sigs[SIG_TREE_BUILD_POST] = g_signal_newv("tree-build:post", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
+	obj_sigs[SIG_TREE_BUILD_PRE] = g_signal_newv("tree-build-pre", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
+	obj_sigs[SIG_TREE_BUILD_POST] = g_signal_newv("tree-build-post", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
 }
 
 static void openmic_context_init(OpenMicContext* self) {
@@ -44,6 +45,20 @@ static void openmic_context_init(OpenMicContext* self) {
 	self->module_manager = openmic_module_manager_new(self);
 
 	priv->main_loop = g_main_loop_new(NULL, FALSE);
+}
+
+OpenMicContext* openmic_context_new(OpenMicContextOptions opts) {
+	OpenMicContext* self = g_object_new(OPENMIC_TYPE_CONTEXT, NULL);
+	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
+
+	priv->opts = opts;
+
+	const gchar* str = NULL;
+	guint i = 0;
+	while ((str = opts.module_paths[i++])) {
+		openmic_module_manager_append(self->module_manager, str);
+	}
+	return self;
 }
 
 void openmic_context_build_treev(OpenMicContext* self, va_list ap) {

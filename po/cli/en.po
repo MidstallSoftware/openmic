@@ -7,17 +7,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "LIB_OPTS"
-msgstr "OpenMic Library Options"
-
-msgid "INIT_FAILURE"
-msgstr "OpenMic library has failed to initialize: %s"
-
-msgid "ERROR_UNKNOWN"
-msgstr "Unknown error"
-
 msgid "ARGS_LABEL"
-msgstr "- OpenMic Library"
+msgstr "- OpenMic CLI"
 
-msgid "VERSION"
-msgstr "OpenMic Library Version"
+msgid "ARGS_MODULES"
+msgstr "List of modules to load"

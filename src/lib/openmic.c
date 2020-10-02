@@ -2,6 +2,7 @@
 #include <glib/gi18n.h>
 #include <gst/gst.h>
 #include <openmic-config.h>
+#include <locale.h>
 #include <stdio.h>
 
 static gboolean openmic_inited = FALSE;
@@ -41,6 +42,7 @@ gboolean openmic_init_check(int* argc, char** argv[], GError** error) {
 		return FALSE;
 	}
 
+	setlocale(LC_ALL, "");
 	bindtextdomain(GETTEXT_PACKAGE, OPENMIC_DATADIR"/local");
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
@@ -54,7 +56,7 @@ gboolean openmic_init_check(int* argc, char** argv[], GError** error) {
 	g_option_context_free(ctx);
 
 	if (openmic_show_version) {
-		printf("OpenMic Library Version: %s\n", openmic_version_string());
+		printf("%s: %s\n", g_dgettext(GETTEXT_PACKAGE, "VERSION"), openmic_version_string());
 		exit(0);
 	}
 

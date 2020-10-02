@@ -2,10 +2,13 @@ project('OpenMic', 'c', version: '0.1.0-prealpha', license: 'GPLv3')
 
 if target_machine.system() == 'android' or target_machine.system() == 'linux'
   module_ext = 'so'
+  path_sep = '/'
 elif target_machine.system() == 'darwin'
   module_ext = 'dylib'
+  path_sep = '/'
 elif target_machine.system() == 'windows'
   module_ext = 'dll'
+  path_sep = '\\'
 else
   error('Unsuported target machine')
 endif
@@ -64,6 +67,7 @@ config_data.set('version_minor', meson.project_version().split('.')[1])
 config_data.set('version_patch', meson.project_version().split('.')[2].split('-')[0])
 config_data.set('version_tag', meson.project_version().split('-')[1])
 config_data.set('module_ext', module_ext)
+config_data.set('path_sep', path_sep)
 config_data.set('prefix', path_prefix)
 config_data.set('datadir', path_datadir)
 config_data.set('libdir', path_libdir)

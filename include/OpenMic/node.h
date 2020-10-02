@@ -1,5 +1,6 @@
 #pragma once
 
+#include <OpenMic/context.h>
 #include <gst/gst.h>
 #include <glib-object.h>
 #include <openmic-config.h>
@@ -32,5 +33,7 @@ struct _OpenMicNodeClass {
 	WINDOW* (*create_tui)(OpenMicNode* node);
 #endif
 };
+
+OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name);
 
 G_END_DECLS

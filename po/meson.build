@@ -1,1 +1,2 @@
+subdir('cli')
 subdir('lib')
