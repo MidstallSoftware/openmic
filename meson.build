@@ -92,7 +92,7 @@ subdir('po')
 lib_sources = [join_paths(meson.source_root(), 'src/lib/context.c'), join_paths(meson.source_root(), 'src/lib/module-loader.c'),
   join_paths(meson.source_root(), 'src/lib/module-manager.c'), join_paths(meson.source_root(), 'src/lib/module.c'),
   join_paths(meson.source_root(), 'src/lib/node.c'), join_paths(meson.source_root(), 'src/lib/openmic.c'),
-  join_paths(meson.source_root(), 'src/lib/nodes/input.c')]
+  join_paths(meson.source_root(), 'src/lib/nodes/input.c'), join_paths(meson.source_root(), 'src/lib/nodes/output.c')]
 lib_headers = [join_paths(meson.source_root(), 'include/OpenMic/context.h'), join_paths(meson.source_root(), 'include/OpenMic/module-loader.h'),
   join_paths(meson.source_root(), 'include/OpenMic/module-manager.h'), join_paths(meson.source_root(), 'include/OpenMic/module.h'),
   join_paths(meson.source_root(), 'include/OpenMic/node.h'), join_paths(meson.source_root(), 'include/OpenMic/openmic.h')]

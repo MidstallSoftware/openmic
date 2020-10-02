@@ -120,5 +120,5 @@ OpenMicModuleLoader* openmic_module_loader_new(OpenMicContext* ctx, const gchar*
 
 OpenMicModule* openmic_module_loader_create_instance(OpenMicModuleLoader* self) {
 	OpenMicModuleLoaderPrivate* priv = openmic_module_loader_get_instance_private(self);
-	return g_object_new(priv->type, "context", priv->ctx, NULL);
+	return g_object_new(priv->type, "context", priv->ctx, "module-loader", self, NULL);
 }

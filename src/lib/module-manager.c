@@ -9,6 +9,7 @@ enum {
 
 	SIG_0 = 0,
 	SIG_LOAD,
+	SIG_UNLOAD,
 	N_SIGNALS
 };
 
@@ -22,6 +23,18 @@ G_DEFINE_TYPE_WITH_PRIVATE(OpenMicModuleManager, openmic_module_manager, G_TYPE_
 
 static GParamSpec* obj_props[N_PROPS] = { NULL };
 static guint obj_sigs[N_SIGNALS] = { 0 };
+
+static void openmic_module_manager_unload(OpenMicModule* module, OpenMicModuleManager* self) {
+	OpenMicModuleManagerPrivate* priv = openmic_module_manager_get_instance_private(self);
+	g_signal_emit(self, obj_sigs[SIG_UNLOAD], 0, module);
+
+	OpenMicModuleLoader* loader = NULL;
+	g_object_get(G_OBJECT(module), "module-loader", &loader, NULL);
+	g_assert(loader);
+
+	g_ptr_array_remove(priv->loaders, loader);
+	g_object_unref(loader);
+}
 
 static void openmic_module_manager_dispose(GObject* obj) {
 	G_OBJECT_CLASS(openmic_module_manager_parent_class)->dispose(obj);
@@ -72,6 +85,7 @@ static void openmic_module_manager_class_init(OpenMicModuleManagerClass* klass) 
 	object_class->get_property = openmic_module_manager_get_property;
 
 	obj_sigs[SIG_LOAD] = g_signal_new("load", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL, G_TYPE_NONE, 1, OPENMIC_TYPE_MODULE);
+	obj_sigs[SIG_UNLOAD] = g_signal_new("unload", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL, G_TYPE_NONE, 1, OPENMIC_TYPE_MODULE);
 	obj_props[PROP_CONTEXT] = g_param_spec_object("context", "Context", "OpenMic context instance", OPENMIC_TYPE_CONTEXT, G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 
 	g_object_class_install_properties(object_class, N_PROPS, obj_props);
@@ -124,6 +138,7 @@ const OpenMicModule* openmic_module_manager_load(OpenMicModuleManager* self, con
 	OpenMicModuleLoader* loader = openmic_module_loader_new(priv->ctx, modpath);
 	g_ptr_array_add(priv->loaders, loader);
 	OpenMicModule* mod = openmic_module_loader_create_instance(loader);
+	g_signal_connect(mod, "unload", (GCallback)openmic_module_manager_unload, self);
 	g_signal_emit(self, obj_sigs[SIG_LOAD], 0, mod);
 	return mod;
 }

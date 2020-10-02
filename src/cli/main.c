@@ -72,6 +72,7 @@ int main(int argc, char** argv) {
 		return EXIT_SUCCESS;
 	}
 
+	openmic_context_play(ctx);
 	g_object_unref(ctx);
 	return EXIT_SUCCESS;
 }

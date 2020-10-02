@@ -89,6 +89,7 @@ void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other) {
 	OpenMicNodeClass* other_class = OPENMIC_NODE_CLASS(other);
 	g_node_insert(klass->gnode, i, other_class->gnode);
 	gst_bin_add(GST_BIN(klass->elem), other_class->elem);
+	gst_element_link(other_class->elem, klass->elem);
 }
 
 void openmic_node_remove(OpenMicNode* self, OpenMicNode* other) {
@@ -96,4 +97,5 @@ void openmic_node_remove(OpenMicNode* self, OpenMicNode* other) {
 	OpenMicNodeClass* other_class = OPENMIC_NODE_CLASS(other);
 	g_node_unlink(other_class->gnode);
 	gst_bin_remove(GST_BIN(klass->elem), other_class->elem);
+	gst_element_unlink(other_class->elem, klass->elem);
 }
