@@ -1,10 +1,55 @@
 #include <OpenMic/node.h>
 
-typedef struct _OpenMicNodePrivate {} OpenMicNodePrivate;
+enum {
+	PROP_0,
+	PROP_CONTEXT,
+	N_PROPS
+};
+
+typedef struct _OpenMicNodePrivate {
+	OpenMicContext* ctx;
+} OpenMicNodePrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(OpenMicNode, openmic_node, G_TYPE_OBJECT);
 
-static void openmic_node_class_init(OpenMicNodeClass* klass) {}
+static GParamSpec* obj_props[N_PROPS] = { NULL };
+
+static void openmic_node_set_property(GObject* obj, guint propid, const GValue* value, GParamSpec* pspec) {
+	OpenMicNode* self = OPENMIC_NODE(obj);
+	OpenMicNodePrivate* priv = openmic_node_get_instance_private(self);
+	switch (propid) {
+		case PROP_CONTEXT:
+			priv->ctx = g_value_get_object(value);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, propid, pspec);
+			break;
+	}
+}
+
+static void openmic_node_get_property(GObject* obj, guint propid, GValue* value, GParamSpec* pspec) {
+	OpenMicNode* self = OPENMIC_NODE(obj);
+	OpenMicNodePrivate* priv = openmic_node_get_instance_private(self);
+	switch (propid) {
+		case PROP_CONTEXT:
+			g_value_set_object(value, priv->ctx);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, propid, pspec);
+			break;
+	}
+}
+
+static void openmic_node_class_init(OpenMicNodeClass* klass) {
+	GObjectClass* object_class = G_OBJECT_CLASS(klass);
+
+	object_class->set_property = openmic_node_set_property;
+	object_class->get_property = openmic_node_get_property;
+
+	obj_props[PROP_CONTEXT] = g_param_spec_object("context", "Context", "OpenMic context instance", OPENMIC_TYPE_CONTEXT, G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+
+	g_object_class_install_properties(object_class, N_PROPS, obj_props);
+}
 
 static void openmic_node_init(OpenMicNode* self) {}
 
@@ -14,4 +59,9 @@ OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name) {
 	OpenMicNode* node = g_object_new(type, "context", ctx, NULL);
 	g_assert(G_TYPE_CHECK_INSTANCE_TYPE(node, OPENMIC_TYPE_NODE));
 	return node;
+}
+
+OpenMicContext* openmic_node_get_context(OpenMicNode* self) {
+	OpenMicNodePrivate* priv = openmic_node_get_instance_private(self);
+	return priv->ctx;
 }

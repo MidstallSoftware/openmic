@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
 	textdomain(GETTEXT_PACKAGE);
 
 	gchar** modules = NULL;
+	gboolean show_nodes = FALSE;
 
 	{
 		GOptionContext* ctx = g_option_context_new(_("ARGS_LABEL"));
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
 		GOptionGroup* grp = g_option_group_new(NULL, NULL, NULL, NULL, NULL);
 		g_option_group_add_entries(grp, (GOptionEntry[]){
 			{ "modules", 'm', G_OPTION_FLAG_NONE, G_OPTION_ARG_STRING_ARRAY, &modules, _("ARGS_MODULES"), "LIST" },
+			{ "list-nodes", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, &show_nodes, _("ARGS_LIST_NODES"), NULL },
 			NULL
 		});
 		g_option_context_set_main_group(ctx, grp);
@@ -55,6 +57,21 @@ int main(int argc, char** argv) {
 		}
 		g_strfreev(modules);
 	}
+
+	if (show_nodes) {
+		guint n_types = 0;
+		GType* types = g_type_children(OPENMIC_TYPE_NODE, &n_types);
+		// TODO: use context's built in registry
+
+		for (guint i = 0; i < n_types; i++) {
+			printf("%s\n", g_type_name(types[i]));
+		}
+
+		g_free(types);
+		g_object_unref(ctx);
+		return EXIT_SUCCESS;
+	}
+
 	g_object_unref(ctx);
 	return EXIT_SUCCESS;
 }

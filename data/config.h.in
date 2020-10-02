@@ -11,6 +11,7 @@
 
 #define OPENMIC_MODULE_EXT "@module_ext@"
 #define OPENMIC_PATH_SEP "@path_sep@"
+#define OPENMIC_PATH_SEP_CHR '@path_sep@'
 
 #mesondefine OPENMIC_CLI
 #mesondefine OPENMIC_GUI

@@ -1,3 +1,4 @@
+#include <OpenMic/nodes/input.h>
 #include <OpenMic/context.h>
 #include <OpenMic/node.h>
 #include <OpenMic/module-manager.h>
@@ -11,6 +12,7 @@ enum {
 
 typedef struct _OpenMicContextPrivate {
 	GPtrArray* modules;
+	GPtrArray* types;
 	GMainLoop* main_loop;
 	OpenMicContextOptions opts;
 } OpenMicContextPrivate;
@@ -26,6 +28,7 @@ static void openmic_context_finalize(GObject* obj) {
 	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
 
 	g_object_unref(self->module_manager);
+	g_ptr_array_unref(priv->types);
 	g_main_loop_unref(priv->main_loop);
 }
 
@@ -45,6 +48,9 @@ static void openmic_context_init(OpenMicContext* self) {
 	self->module_manager = openmic_module_manager_new(self);
 
 	priv->main_loop = g_main_loop_new(NULL, FALSE);
+	priv->types = g_ptr_array_new();
+
+	openmic_context_register_node(self, OPENMIC_TYPE_INPUT);
 }
 
 OpenMicContext* openmic_context_new(OpenMicContextOptions opts) {
@@ -84,4 +90,9 @@ void openmic_context_build_tree(OpenMicContext* self, ...) {
 	va_start(ap, self);
 	openmic_context_build_treev(self, ap);
 	va_end(ap);
+}
+
+void openmic_context_register_node(OpenMicContext* self, GType type) {
+	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
+	g_ptr_array_add(priv->types, (gpointer)g_type_name(type));
 }

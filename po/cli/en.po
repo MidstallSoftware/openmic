@@ -12,3 +12,6 @@ msgstr "- OpenMic CLI"
 
 msgid "ARGS_MODULES"
 msgstr "List of modules to load"
+
+msgid "ARGS_LIST_NODES"
+msgstr "List the nodes that are available"

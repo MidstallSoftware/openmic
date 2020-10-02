@@ -35,5 +35,6 @@ struct _OpenMicNodeClass {
 };
 
 OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name);
+OpenMicContext* openmic_node_get_context(OpenMicNode* self);
 
 G_END_DECLS

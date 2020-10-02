@@ -55,10 +55,11 @@ struct _OpenMicModuleClass {
 
 #define OPENMIC_MODULE_DECLARE(ObjectName, object_name) OPENMIC_MODULE_DECLARE_WITH_CODE(ObjectName, object_name, {})
 
-const OpenMicModuleInfo* openmic_module_get_info(OpenMicModule* module);
+OpenMicContext* openmic_module_get_context(OpenMicModule* self);
+const OpenMicModuleInfo* openmic_module_get_info(OpenMicModule* self);
 
 #ifdef OPENMIC_GUI
-GtkWidget* openmic_module_create_gui(OpenMicModule* module);
+GtkWidget* openmic_module_create_gui(OpenMicModule* self);
 #endif
 
 G_END_DECLS

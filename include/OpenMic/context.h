@@ -28,5 +28,6 @@ typedef struct _OpenMicContextOptions {
 OpenMicContext* openmic_context_new(OpenMicContextOptions opts);
 void openmic_context_build_treev(OpenMicContext* self, va_list ap);
 void openmic_context_build_tree(OpenMicContext* self, ...);
+void openmic_context_register_node(OpenMicContext* self, GType type);
 
 G_END_DECLS
