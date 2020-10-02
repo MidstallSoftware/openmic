@@ -23,6 +23,7 @@ static void openmic_node_finalize(GObject* obj) {
 	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self);
 
 	g_node_destroy(klass->gnode);
+	gst_object_unref(GST_OBJECT(klass->elem));
 
 	G_OBJECT_CLASS(openmic_node_parent_class)->finalize(obj);
 }
