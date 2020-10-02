@@ -66,11 +66,29 @@ const OpenMicModuleInfo* openmic_module_get_info(OpenMicModule* self) {
 	return NULL;
 }
 
+#ifdef OPENMIC_CLI
+GOptionGroup* openmic_module_create_cli(OpenMicModule* self) {
+	OpenMicModuleClass* klass = OPENMIC_MODULE_GET_CLASS(self);
+	if (klass && klass->create_cli) {
+		return klass->create_cli(self);
+	}
+	return NULL;
+}
+#endif
 #ifdef OPENMIC_GUI
 GtkWidget* openmic_module_create_gui(OpenMicModule* self) {
 	OpenMicModuleClass* klass = OPENMIC_MODULE_GET_CLASS(self);
 	if (klass && klass->create_gui) {
 		return klass->create_gui(self);
+	}
+	return NULL;
+}
+#endif
+#ifdef OPENMIC_TUI
+WINDOW* openmic_module_create_tui(OpenMicModule* self) {
+	OpenMicModuleClass* klass = OPENMIC_MODULE_GET_CLASS(self);
+	if (klass && klass->create_tui) {
+		return klass->create_tui(self);
 	}
 	return NULL;
 }

@@ -20,7 +20,7 @@ G_DECLARE_DERIVABLE_TYPE(OpenMicNode, openmic_node, OPENMIC, NODE, GObject);
 struct _OpenMicNodeClass {
 	GObjectClass parent_class;
 
-	GstBin* bin;
+	GstElement* elem;
 	GNode* gnode;
 
 #ifdef OPENMIC_CLI
@@ -36,5 +36,7 @@ struct _OpenMicNodeClass {
 
 OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name);
 OpenMicContext* openmic_node_get_context(OpenMicNode* self);
+void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other);
+void openmic_node_remove(OpenMicNode* self, OpenMicNode* other);
 
 G_END_DECLS
