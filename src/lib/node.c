@@ -23,7 +23,6 @@ static void openmic_node_dispose(GObject* obj) {
 
 static void openmic_node_finalize(GObject* obj) {
 	OpenMicNode* self = OPENMIC_NODE(obj);
-	OpenMicNodeClass* klass = OPENMIC_NODE_GET_CLASS(self);
 	OpenMicNodePrivate* priv = openmic_node_get_instance_private(self);
 
 	g_node_destroy(priv->gnode);
@@ -110,16 +109,13 @@ void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other) {
 
 	g_node_insert(priv->gnode, i, openmic_node_get_gnode(self));
 	gst_bin_add(GST_BIN(priv->elem), other_priv->elem);
-	gst_element_link(priv->elem, other_priv->elem);
+	gst_element_link(other_priv->elem, priv->elem);
 }
 
 void openmic_node_remove(OpenMicNode* self, OpenMicNode* other) {
 	g_assert(G_TYPE_CHECK_INSTANCE_TYPE(self, OPENMIC_TYPE_NODE));
 	OpenMicNodePrivate* priv = openmic_node_get_instance_private(self);
 	OpenMicNodePrivate* other_priv = openmic_node_get_instance_private(other);
-
-	OpenMicNodeClass* klass = OPENMIC_NODE_GET_CLASS(self);
-	OpenMicNodeClass* other_class = OPENMIC_NODE_GET_CLASS(other);
 
 	g_node_unlink(openmic_node_get_gnode(other));
 	gst_bin_remove(GST_BIN(priv->elem), other_priv->elem);

@@ -76,7 +76,6 @@ static void openmic_module_class_init(OpenMicModuleClass* klass) {
 	obj_props[PROP_MODULE_LOADER] = g_param_spec_object("module-loader", "Module Loader", "OpenMic Module Loader instance", OPENMIC_TYPE_MODULE_LOADER, G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 
 	obj_sigs[SIG_UNLOAD] = g_signal_new("unload", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
-
 	g_object_class_install_properties(object_class, N_PROPS, obj_props);
 }
 

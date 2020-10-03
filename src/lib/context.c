@@ -6,7 +6,11 @@
 #include <glib/gi18n.h>
 
 enum {
-	SIG_0,
+	PROP_0,
+	PROP_PIPELINE,
+	N_PROPS,
+
+	SIG_0 = 0,
 	SIG_TREE_BUILD_PRE,
 	SIG_TREE_BUILD_POST,
 	N_SIGNALS
@@ -23,6 +27,7 @@ typedef struct _OpenMicContextPrivate {
 
 G_DEFINE_TYPE_WITH_PRIVATE(OpenMicContext, openmic_context, G_TYPE_OBJECT);
 
+static GParamSpec* obj_props[N_PROPS] = { NULL };
 static guint obj_sigs[N_SIGNALS] = { 0 };
 
 static gboolean openmic_context_bus_call(GstBus* bus, GstMessage* msg, gpointer data) {
@@ -76,14 +81,40 @@ static void openmic_context_finalize(GObject* obj) {
 	G_OBJECT_CLASS(openmic_context_parent_class)->finalize(obj);
 }
 
+static void openmic_context_set_property(GObject* obj, guint propid, const GValue* value, GParamSpec* pspec) {
+	switch (propid) {
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, propid, pspec);
+			break;
+	}
+}
+
+static void openmic_context_get_property(GObject* obj, guint propid, GValue* value, GParamSpec* pspec) {
+	OpenMicContext* self = OPENMIC_CONTEXT(obj);
+	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
+	switch (propid) {
+		case PROP_PIPELINE:
+			g_value_set_object(value, priv->pipeline);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, propid, pspec);
+			break;
+	}
+}
+
 static void openmic_context_class_init(OpenMicContextClass* klass) {
 	GObjectClass* object_class = G_OBJECT_CLASS(klass);
 
 	object_class->dispose = openmic_context_dispose;
 	object_class->finalize = openmic_context_finalize;
+	object_class->set_property = openmic_context_set_property;
+	object_class->get_property = openmic_context_get_property;
 
 	obj_sigs[SIG_TREE_BUILD_PRE] = g_signal_newv("tree-build-pre", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
 	obj_sigs[SIG_TREE_BUILD_POST] = g_signal_newv("tree-build-post", G_TYPE_FROM_CLASS(object_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
+
+	obj_props[PROP_PIPELINE] = g_param_spec_object("pipeline", "Pipeline", "GStreamer Pipeline", GST_TYPE_ELEMENT, G_PARAM_READABLE);
+	g_object_class_install_properties(object_class, N_PROPS, obj_props);
 }
 
 static void openmic_context_init(OpenMicContext* self) {
@@ -127,14 +158,15 @@ void openmic_context_build_treev(OpenMicContext* self, va_list ap) {
 		g_node_destroy(self->tree);
 	}
 
-	self->tree = g_node_new(OPENMIC_NODE(g_object_new(OPENMIC_TYPE_OUTPUT, NULL)));
+	OpenMicNode* tree = openmic_node_new(self, "OpenMicOutput");
+	self->tree = openmic_node_get_gnode(tree);
 
 	g_signal_emit(self, obj_sigs[SIG_TREE_BUILD_PRE], 0);
 
 	OpenMicNode* node;
 	while ((node = OPENMIC_NODE(va_arg(ap, OpenMicNode*)))) {
 		g_assert(node);
-		openmic_node_attach(self->tree->data, -1, node);
+		openmic_node_attach(tree, -1, node);
 	}
 
 	GstElement* root_elem = NULL;
