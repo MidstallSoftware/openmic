@@ -20,8 +20,6 @@ G_DECLARE_DERIVABLE_TYPE(OpenMicNode, openmic_node, OPENMIC, NODE, GObject);
 struct _OpenMicNodeClass {
 	GObjectClass parent_class;
 
-	GstElement* elem;
-
 #ifdef OPENMIC_CLI
 	GOptionGroup* (*create_cli)(OpenMicNode* node);
 #endif
