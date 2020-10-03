@@ -32,6 +32,8 @@ struct _OpenMicNodeClass {
 #ifdef OPENMIC_TUI
 	WINDOW* (*create_tui)(OpenMicNode* node);
 #endif
+
+	gpointer padding[12];
 };
 
 OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name);

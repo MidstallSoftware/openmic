@@ -10,7 +10,7 @@ typedef struct _OpenMicNodePrivate {
 	OpenMicContext* ctx;
 } OpenMicNodePrivate;
 
-G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(OpenMicNode, openmic_node, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE(OpenMicNode, openmic_node, G_TYPE_OBJECT);
 
 static GParamSpec* obj_props[N_PROPS] = { NULL };
 
