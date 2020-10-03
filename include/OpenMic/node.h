@@ -21,7 +21,6 @@ struct _OpenMicNodeClass {
 	GObjectClass parent_class;
 
 	GstElement* elem;
-	GNode* gnode;
 
 #ifdef OPENMIC_CLI
 	GOptionGroup* (*create_cli)(OpenMicNode* node);
@@ -40,5 +39,6 @@ OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name);
 OpenMicContext* openmic_node_get_context(OpenMicNode* self);
 void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other);
 void openmic_node_remove(OpenMicNode* self, OpenMicNode* other);
+GNode* openmic_node_get_gnode(OpenMicNode* self);
 
 G_END_DECLS

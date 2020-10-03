@@ -18,11 +18,36 @@ typedef struct _OpenMicContextPrivate {
 	GMainLoop* main_loop;
 	GstElement* pipeline;
 	OpenMicContextOptions opts;
+	guint bus_watch_id;
 } OpenMicContextPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE(OpenMicContext, openmic_context, G_TYPE_OBJECT);
 
 static guint obj_sigs[N_SIGNALS] = { 0 };
+
+static gboolean openmic_context_bus_call(GstBus* bus, GstMessage* msg, gpointer data) {
+	OpenMicContext* self = (OpenMicContext*)data;
+	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
+	switch (GST_MESSAGE_TYPE(msg)) {
+		case GST_MESSAGE_EOS:
+			g_main_loop_quit(priv->main_loop);
+			break;
+		case GST_MESSAGE_ERROR:
+			{
+				GError* error = NULL;
+				gchar* debug = NULL;
+				gst_message_parse_error(msg, &error, &debug);
+				g_free(debug);
+				g_error("OpenMicContext: %s", error->message);
+				g_error_free(error);
+			}
+			g_main_loop_quit(priv->main_loop);
+			break;
+		default:
+			break;
+	}
+	return TRUE;
+}
 
 static void openmic_context_signal_module_load(OpenMicModule* module, OpenMicContext* self) {
 	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
@@ -46,6 +71,7 @@ static void openmic_context_finalize(GObject* obj) {
 	g_ptr_array_unref(priv->types);
 	g_main_loop_unref(priv->main_loop);
 	gst_object_unref(GST_OBJECT(priv->pipeline));
+	g_source_remove(priv->bus_watch_id);
 
 	G_OBJECT_CLASS(openmic_context_parent_class)->finalize(obj);
 }
@@ -68,6 +94,10 @@ static void openmic_context_init(OpenMicContext* self) {
 	priv->main_loop = g_main_loop_new(NULL, FALSE);
 	priv->types = g_ptr_array_new();
 	priv->pipeline = gst_pipeline_new("OpenMic Pipeline");
+
+	GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(priv->pipeline));
+	priv->bus_watch_id = gst_bus_add_watch(bus, openmic_context_bus_call, self);
+	gst_object_unref(bus);
 
 	g_signal_connect(self->module_manager, "load", (GCallback)openmic_context_signal_module_load, self);
 	g_signal_connect(self->module_manager, "unload", (GCallback)openmic_context_signal_module_unload, self);
