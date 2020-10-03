@@ -58,6 +58,9 @@ int main(int argc, char** argv) {
 		g_strfreev(modules);
 	}
 
+	OpenMicNode* input = openmic_node_new(ctx, "OpenMicInput");
+	openmic_context_build_tree(ctx, input, NULL);
+
 	if (show_nodes) {
 		guint n_types = 0;
 		GType* types = g_type_children(OPENMIC_TYPE_NODE, &n_types);

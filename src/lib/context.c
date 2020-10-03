@@ -94,14 +94,14 @@ void openmic_context_build_treev(OpenMicContext* self, va_list ap) {
 		g_node_destroy(self->tree);
 	}
 
-	self->tree = g_node_new(NULL); // TODO: OpenMicOutput
+	self->tree = g_node_new(OPENMIC_NODE(g_object_new(OPENMIC_TYPE_OUTPUT, NULL)));
 
 	g_signal_emit(self, obj_sigs[SIG_TREE_BUILD_PRE], 0);
 
 	OpenMicNode* node;
-	while ((node = va_arg(ap, OpenMicNode*))) {
-		OpenMicNodeClass* node_class = OPENMIC_NODE_CLASS(node);
-		g_node_insert(self->tree, -1, node_class->gnode);
+	while ((node = OPENMIC_NODE(va_arg(ap, OpenMicNode*)))) {
+		g_assert(node);
+		openmic_node_attach(self->tree->data, -1, node);
 	}
 
 	g_signal_emit(self, obj_sigs[SIG_TREE_BUILD_POST], 0);

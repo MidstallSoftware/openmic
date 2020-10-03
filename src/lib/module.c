@@ -27,7 +27,7 @@ static void openmic_module_dispose(GObject* obj) {
 }
 
 static void openmic_module_finalize(GObject* obj) {
-	OpenMicModule* self = OPENMIC_MODULE(self);
+	OpenMicModule* self = OPENMIC_MODULE(obj);
 	g_signal_emit(self, obj_sigs[SIG_UNLOAD], 0, self);
 	G_OBJECT_CLASS(openmic_module_parent_class)->finalize(obj);
 }

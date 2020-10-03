@@ -14,6 +14,10 @@ G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(OpenMicNode, openmic_node, G_TYPE_OBJECT);
 
 static GParamSpec* obj_props[N_PROPS] = { NULL };
 
+static void openmic_node_constructed(GObject* obj) {
+	G_OBJECT_CLASS(openmic_node_parent_class)->constructed(obj);
+}
+
 static void openmic_node_dispose(GObject* obj) {
 	G_OBJECT_CLASS(openmic_node_parent_class)->dispose(obj);
 }
@@ -57,6 +61,7 @@ static void openmic_node_get_property(GObject* obj, guint propid, GValue* value,
 static void openmic_node_class_init(OpenMicNodeClass* klass) {
 	GObjectClass* object_class = G_OBJECT_CLASS(klass);
 
+	object_class->constructed = openmic_node_constructed;
 	object_class->dispose = openmic_node_dispose;
 	object_class->finalize = openmic_node_finalize;
 	object_class->set_property = openmic_node_set_property;
@@ -67,15 +72,15 @@ static void openmic_node_class_init(OpenMicNodeClass* klass) {
 }
 
 static void openmic_node_init(OpenMicNode* self) {
-	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self);
-	klass->gnode = g_node_new(self);
 }
 
 OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name) {
 	GType type = g_type_from_name(name);
 	if (type == G_TYPE_NONE) return NULL;
-	OpenMicNode* node = g_object_new(type, "context", ctx, NULL);
+	OpenMicNode* node = OPENMIC_NODE(g_object_new(type, "context", ctx, NULL));
 	g_assert(G_TYPE_CHECK_INSTANCE_TYPE(node, OPENMIC_TYPE_NODE));
+	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(node); // FIXME: invalid unclassed type
+	klass->gnode = g_node_new(node);
 	return node;
 }
 
@@ -85,8 +90,12 @@ OpenMicContext* openmic_node_get_context(OpenMicNode* self) {
 }
 
 void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other) {
-	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self);
-	OpenMicNodeClass* other_class = OPENMIC_NODE_CLASS(other);
+	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self); // FIXME: invalid unclassed type
+	OpenMicNodeClass* other_class = OPENMIC_NODE_CLASS(other); // FIXME: invalid unclassed type
+
+	g_assert(klass);
+	g_assert(other_class);
+
 	g_node_insert(klass->gnode, i, other_class->gnode);
 	gst_bin_add(GST_BIN(klass->elem), other_class->elem);
 	gst_element_link(other_class->elem, klass->elem);
