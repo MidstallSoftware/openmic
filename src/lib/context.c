@@ -93,7 +93,7 @@ static void openmic_context_init(OpenMicContext* self) {
 
 	priv->main_loop = g_main_loop_new(NULL, FALSE);
 	priv->types = g_ptr_array_new();
-	priv->pipeline = gst_pipeline_new("OpenMic Pipeline");
+	priv->pipeline = gst_pipeline_new(NULL);
 
 	GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(priv->pipeline));
 	priv->bus_watch_id = gst_bus_add_watch(bus, openmic_context_bus_call, self);
@@ -121,6 +121,8 @@ OpenMicContext* openmic_context_new(OpenMicContextOptions opts) {
 }
 
 void openmic_context_build_treev(OpenMicContext* self, va_list ap) {
+	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
+
 	if (self->tree) {
 		g_node_destroy(self->tree);
 	}
@@ -134,6 +136,12 @@ void openmic_context_build_treev(OpenMicContext* self, va_list ap) {
 		g_assert(node);
 		openmic_node_attach(self->tree->data, -1, node);
 	}
+
+	GstElement* root_elem = NULL;
+	g_object_get(G_OBJECT(self->tree->data), "element", &root_elem, NULL);
+	g_assert(root_elem);
+
+	gst_bin_add(GST_BIN(priv->pipeline), root_elem);
 
 	g_signal_emit(self, obj_sigs[SIG_TREE_BUILD_POST], 0);
 }
@@ -158,11 +166,11 @@ void openmic_context_unregister_node(OpenMicContext* self, GType type) {
 void openmic_context_play(OpenMicContext* self) {
 	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
 	gst_element_set_state(priv->pipeline, GST_STATE_PLAYING);
-	if (!g_main_loop_is_running(priv->main_loop)) g_main_loop_run(priv->main_loop);
+	g_main_loop_run(priv->main_loop);
 }
 
 void openmic_context_stop(OpenMicContext* self) {
 	OpenMicContextPrivate* priv = openmic_context_get_instance_private(self);
-	if (g_main_loop_is_running(priv->main_loop)) g_main_loop_quit(priv->main_loop);
+	g_main_loop_quit(priv->main_loop);
 	gst_element_set_state(priv->pipeline, GST_STATE_NULL);
 }
