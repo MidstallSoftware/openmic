@@ -15,6 +15,10 @@ G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(OpenMicNode, openmic_node, G_TYPE_OBJECT);
 static GParamSpec* obj_props[N_PROPS] = { NULL };
 
 static void openmic_node_constructed(GObject* obj) {
+	OpenMicNode* self = OPENMIC_NODE(obj);
+	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self); // FIXME: invalid unclassed type
+	klass->gnode = g_node_new(self);
+
 	G_OBJECT_CLASS(openmic_node_parent_class)->constructed(obj);
 }
 
@@ -79,8 +83,6 @@ OpenMicNode* openmic_node_new(OpenMicContext* ctx, const gchar* name) {
 	if (type == G_TYPE_NONE) return NULL;
 	OpenMicNode* node = OPENMIC_NODE(g_object_new(type, "context", ctx, NULL));
 	g_assert(G_TYPE_CHECK_INSTANCE_TYPE(node, OPENMIC_TYPE_NODE));
-	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(node); // FIXME: invalid unclassed type
-	klass->gnode = g_node_new(node);
 	return node;
 }
 
@@ -90,6 +92,7 @@ OpenMicContext* openmic_node_get_context(OpenMicNode* self) {
 }
 
 void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other) {
+	g_assert(G_TYPE_CHECK_INSTANCE_TYPE(self, OPENMIC_TYPE_NODE));
 	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self); // FIXME: invalid unclassed type
 	OpenMicNodeClass* other_class = OPENMIC_NODE_CLASS(other); // FIXME: invalid unclassed type
 
@@ -102,6 +105,7 @@ void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other) {
 }
 
 void openmic_node_remove(OpenMicNode* self, OpenMicNode* other) {
+	g_assert(G_TYPE_CHECK_INSTANCE_TYPE(self, OPENMIC_TYPE_NODE));
 	OpenMicNodeClass* klass = OPENMIC_NODE_CLASS(self);
 	OpenMicNodeClass* other_class = OPENMIC_NODE_CLASS(other);
 	g_node_unlink(other_class->gnode);

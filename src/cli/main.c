@@ -8,7 +8,6 @@
 #include <locale.h>
 #include <stdlib.h>
 
-
 int main(int argc, char** argv) {
 	openmic_init(&argc, &argv);
 
@@ -21,14 +20,14 @@ int main(int argc, char** argv) {
 	gboolean show_nodes = FALSE;
 
 	{
-		GOptionContext* ctx = g_option_context_new(_("ARGS_LABEL"));
+		GOptionContext* ctx = g_option_context_new(_("- OpenMic CLI Tool"));
 		g_option_context_add_group(ctx, openmic_get_option_group());
 		g_option_context_add_group(ctx, gst_init_get_option_group());
 
 		GOptionGroup* grp = g_option_group_new(NULL, NULL, NULL, NULL, NULL);
 		g_option_group_add_entries(grp, (GOptionEntry[]){
-			{ "modules", 'm', G_OPTION_FLAG_NONE, G_OPTION_ARG_STRING_ARRAY, &modules, _("ARGS_MODULES"), "LIST" },
-			{ "list-nodes", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, &show_nodes, _("ARGS_LIST_NODES"), NULL },
+			{ "modules", 'm', G_OPTION_FLAG_NONE, G_OPTION_ARG_STRING_ARRAY, &modules, _("List of modules to load"), "LIST" },
+			{ "list-nodes", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, &show_nodes, _("Show a list of all the nodes available"), NULL },
 			NULL
 		});
 		g_option_context_set_main_group(ctx, grp);
@@ -58,9 +57,6 @@ int main(int argc, char** argv) {
 		g_strfreev(modules);
 	}
 
-	OpenMicNode* input = openmic_node_new(ctx, "OpenMicInput");
-	openmic_context_build_tree(ctx, input, NULL);
-
 	if (show_nodes) {
 		guint n_types = 0;
 		GType* types = g_type_children(OPENMIC_TYPE_NODE, &n_types);
@@ -74,6 +70,9 @@ int main(int argc, char** argv) {
 		g_object_unref(ctx);
 		return EXIT_SUCCESS;
 	}
+
+	OpenMicNode* input = openmic_node_new(ctx, "OpenMicInput");
+	openmic_context_build_tree(ctx, input, NULL);
 
 	openmic_context_play(ctx);
 	g_object_unref(ctx);

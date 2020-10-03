@@ -3,6 +3,7 @@
 #include <OpenMic/context.h>
 #include <OpenMic/node.h>
 #include <OpenMic/module-manager.h>
+#include <glib/gi18n.h>
 
 enum {
 	SIG_0,

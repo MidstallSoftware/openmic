@@ -1,17 +1,25 @@
+# English po file for the CLI
+# Copyright (C) 2020 Midstall Software
+# This file is distributed under the same license as the OpenMic package.
+# Tristan Ross <rosscomputerguy@protonmail.com>, 2020.
+#
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2020-10-01 14:31-0700\n"
-"PO-Revision-Date: 2020-10-01 14:31-0700\n"
+"Project-Id-Version: openmic-cli 0.1.0-prealpha\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-02 19:50-0700\n"
+"PO-Revision-Date: 2020-10-02 19:50-0700\n"
 "Last-Translator: Tristan Ross <rosscomputerguy@protonmail.com>\n"
 "Language: en\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "ARGS_LABEL"
-msgstr "- OpenMic CLI"
+msgid "- OpenMic CLI Tool"
+msgstr "- OpenMic CLI Tool"
 
-msgid "ARGS_MODULES"
+msgid "List of modules to load"
 msgstr "List of modules to load"
 
-msgid "ARGS_LIST_NODES"
-msgstr "List the nodes that are available"
+msgid "Show a list of all the nodes available"
+msgstr "Show a list of all the nodes available"

@@ -5,13 +5,16 @@
 #include <locale.h>
 #include <stdio.h>
 
+#undef _
+#define _(str) g_dgettext(GETTEXT_PACKAGE, str)
+
 static gboolean openmic_inited = FALSE;
 static gboolean openmic_show_version = FALSE;
 
 GOptionGroup* openmic_get_option_group() {
-	GOptionGroup* grp = g_option_group_new("openmic", g_dgettext(GETTEXT_PACKAGE, "LIB_OPTS"), g_dgettext(GETTEXT_PACKAGE, "LIB_OPTS"), NULL, NULL);
+	GOptionGroup* grp = g_option_group_new("openmic", _("OpenMic Library Options"), _("Show OpenMic Library options"), NULL, NULL);
 	g_option_group_add_entries(grp, (GOptionEntry[]){
-		{ "openmic-version", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, &openmic_show_version, g_dgettext(GETTEXT_PACKAGE, "SHOW_VERSION"), NULL },
+		{ "openmic-version", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, &openmic_show_version, _("Show the version of libopenmic"), NULL },
 		NULL
 	});
 	return grp;
@@ -20,7 +23,7 @@ GOptionGroup* openmic_get_option_group() {
 void openmic_init(int* argc, char** argv[]) {
 	GError* error = NULL;
 	if (!openmic_init_check(argc, argv, &error)) {
-		g_error("%s: %s", g_dgettext(GETTEXT_PACKAGE, "INIT_FAILURE"), error ? error->message : g_dgettext(GETTEXT_PACKAGE, "ERROR_UNKNOWN"));
+		g_error("%s: %s", _("Failed to initialize library"), error ? error->message : g_dgettext(GETTEXT_PACKAGE, "unknown error"));
 		if (error) g_error_free(error);
 		exit(1);
 	}
@@ -46,7 +49,7 @@ gboolean openmic_init_check(int* argc, char** argv[], GError** error) {
 	bindtextdomain(GETTEXT_PACKAGE, OPENMIC_DATADIR"/local");
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
-	GOptionContext* ctx = g_option_context_new(g_dgettext(GETTEXT_PACKAGE, "ARGS_LABEL"));
+	GOptionContext* ctx = g_option_context_new(_("- OpenMic Library"));
 	g_option_context_set_ignore_unknown_options(ctx, TRUE);
 	g_option_context_set_help_enabled(ctx, FALSE);
 
@@ -56,7 +59,7 @@ gboolean openmic_init_check(int* argc, char** argv[], GError** error) {
 	g_option_context_free(ctx);
 
 	if (openmic_show_version) {
-		printf("%s: %s\n", g_dgettext(GETTEXT_PACKAGE, "VERSION"), openmic_version_string());
+		printf("%s %s\n", _("OpenMic Library version"), openmic_version_string());
 		exit(0);
 	}
 
