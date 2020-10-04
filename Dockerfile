@@ -3,7 +3,7 @@ FROM ubuntu
 ENV TZ=America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 
-RUN apt-get update && apt-get install -y build-essential gcc git meson ninja-build nvidia-cuda-toolkit ocl-icd-opencl-dev gettext libgtk-3-dev libopenal-dev libportaudio2-dev libncurses5-dev libncursesw5-dev && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && apt-get autoremove -y
+RUN apt-get update && apt-get install -y build-essential gcc git meson ninja-build nvidia-cuda-toolkit ocl-icd-opencl-dev gettext libgtk-3-dev libopenal-dev portaudio19-dev libncurses5-dev libncursesw5-dev && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && apt-get autoremove -y
 RUN useradd -m builder
 
 ADD --chown=builder data /opt/openmic/data
