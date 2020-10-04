@@ -2,7 +2,6 @@
 #include <OpenMic/module-manager.h>
 #include <OpenMic/openmic.h>
 #include <openmic-config.h>
-#include <gst/gst.h>
 #include <glib/gi18n.h>
 #include <glib.h>
 #include <locale.h>
@@ -22,7 +21,6 @@ int main(int argc, char** argv) {
 	{
 		GOptionContext* ctx = g_option_context_new(_("- OpenMic CLI Tool"));
 		g_option_context_add_group(ctx, openmic_get_option_group());
-		g_option_context_add_group(ctx, gst_init_get_option_group());
 
 		GOptionGroup* grp = g_option_group_new(NULL, NULL, NULL, NULL, NULL);
 		g_option_group_add_entries(grp, (GOptionEntry[]){

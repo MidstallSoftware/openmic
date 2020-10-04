@@ -1,7 +1,6 @@
 #pragma once
 
 #include <OpenMic/context.h>
-#include <gst/gst.h>
 #include <glib-object.h>
 #include <openmic-config.h>
 
@@ -17,6 +16,11 @@ G_BEGIN_DECLS
 #define OPENMIC_TYPE_NODE (openmic_node_get_type())
 G_DECLARE_DERIVABLE_TYPE(OpenMicNode, openmic_node, OPENMIC, NODE, GObject);
 
+typedef struct {
+	size_t sample_rate;
+	gboolean loop;
+} OpenMicNodeStreamInfo;
+
 struct _OpenMicNodeClass {
 	GObjectClass parent_class;
 
@@ -30,6 +34,9 @@ struct _OpenMicNodeClass {
 	WINDOW* (*create_tui)(OpenMicNode* node);
 #endif
 
+	size_t (*read)(OpenMicNode* node, uint16_t** buffer, GError** error);
+	void (*stream_info)(OpenMicNode* node, OpenMicNodeStreamInfo* info);
+
 	gpointer padding[12];
 };
 
@@ -38,5 +45,6 @@ OpenMicContext* openmic_node_get_context(OpenMicNode* self);
 void openmic_node_attach(OpenMicNode* self, gint i, OpenMicNode* other);
 void openmic_node_remove(OpenMicNode* self, OpenMicNode* other);
 GNode* openmic_node_get_gnode(OpenMicNode* self);
+gboolean openmic_node_sync_stream(OpenMicNode* node, GError** error);
 
 G_END_DECLS

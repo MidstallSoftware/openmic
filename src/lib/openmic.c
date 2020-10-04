@@ -1,6 +1,5 @@
 #include <OpenMic/openmic.h>
 #include <glib/gi18n.h>
-#include <gst/gst.h>
 #include <openmic-config.h>
 #include <locale.h>
 #include <stdio.h>
@@ -38,11 +37,6 @@ gboolean openmic_init_check(int* argc, char** argv[], GError** error) {
 	if (openmic_inited) {
 		g_mutex_unlock(&lock_init);
 		return TRUE;
-	}
-
-	if (!gst_init_check(argc, argv, error)) {
-		g_mutex_unlock(&lock_init);
-		return FALSE;
 	}
 
 	setlocale(LC_ALL, "");

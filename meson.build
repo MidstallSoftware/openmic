@@ -78,7 +78,7 @@ config_data.set('OPENMIC_CUDA', enable_cuda)
 config_data.set('OPENMIC_OPENCL', enable_opencl)
 configure_file(input: join_paths(meson.source_root(), 'data/config.h.in'), output: 'openmic-config.h', configuration: config_data)
 
-basedeps = [dependency('gstreamer-1.0'), dependency('glib-2.0'), dependency('gmodule-2.0')]
+basedeps = [dependency('portaudio-2.0'), dependency('openal'), dependency('glib-2.0'), dependency('gmodule-2.0')]
 
 if enable_tui
   basedeps += [dependency('ncurses')]
@@ -92,10 +92,13 @@ subdir('po')
 lib_sources = [join_paths(meson.source_root(), 'src/lib/context.c'), join_paths(meson.source_root(), 'src/lib/module-loader.c'),
   join_paths(meson.source_root(), 'src/lib/module-manager.c'), join_paths(meson.source_root(), 'src/lib/module.c'),
   join_paths(meson.source_root(), 'src/lib/node.c'), join_paths(meson.source_root(), 'src/lib/openmic.c'),
-  join_paths(meson.source_root(), 'src/lib/nodes/input.c'), join_paths(meson.source_root(), 'src/lib/nodes/output.c')]
+  join_paths(meson.source_root(), 'src/lib/nodes/file-player.c'), join_paths(meson.source_root(), 'src/lib/nodes/input.c'),
+  join_paths(meson.source_root(), 'src/lib/nodes/output.c')]
 lib_headers = [join_paths(meson.source_root(), 'include/OpenMic/context.h'), join_paths(meson.source_root(), 'include/OpenMic/module-loader.h'),
   join_paths(meson.source_root(), 'include/OpenMic/module-manager.h'), join_paths(meson.source_root(), 'include/OpenMic/module.h'),
-  join_paths(meson.source_root(), 'include/OpenMic/node.h'), join_paths(meson.source_root(), 'include/OpenMic/openmic.h')]
+  join_paths(meson.source_root(), 'include/OpenMic/node.h'), join_paths(meson.source_root(), 'include/OpenMic/openmic.h'),
+  join_paths(meson.source_root(), 'include/OpenMic/nodes/file-player.h'), join_paths(meson.source_root(), 'include/OpenMic/nodes/input.h'),
+  join_paths(meson.source_root(), 'include/OpenMic/nodes/output.h')]
 
 if enable_cuda
   if not add_languages('cuda', required: true)

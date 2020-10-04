@@ -16,3 +16,10 @@
 #mesondefine OPENMIC_CLI
 #mesondefine OPENMIC_GUI
 #mesondefine OPENMIC_TUI
+
+#mesondefine OPENMIC_CUDA
+#mesondefine OPENMIC_OPENCL
+
+#if defined(OPENMIC_CUDA) || defined(OPENMIC_OPENCL)
+#define OPENMIC_HW_ACCEL
+#endif
